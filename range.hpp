@@ -36,17 +36,23 @@ class iterator{
     
     public:
 
-    iterator(int x) :cur(x) {}
+    explicit iterator(int x) :cur(x) {}
 
     iterator(const iterator& other) : cur(other.cur) {}
-    
+
+     iterator& operator=(iterator& other){
+        if(cur!=other.cur)
+         cur=other.cur;
+        return *this;
+    }
+
     iterator& operator++(){
         ++cur;
         return *this;
     }
     iterator operator++(int){
-        iterator temp(cur);
-        cur++;
+        iterator temp=*this;
+        ++(*this);
         return temp;
     }
     bool operator==(const iterator& other){
@@ -56,10 +62,6 @@ class iterator{
         return !(cur==other.cur);
     }
      int operator*() { return cur; }
-
-    iterator& operator=(iterator& other){
-        return other;
-    }
     
 };
 

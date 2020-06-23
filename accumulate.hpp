@@ -43,7 +43,19 @@ typename T::value_type cur;
 F func;
 
 public:
-iterator(const iterator& other) = default;
+iterator(const iterator& other){cur=other.cur;}
+    
+
+iterator& operator=(const iterator& o){
+    if(this!=&o){
+        start=o.start;
+        end=o.end;
+        cur=o.cur;
+    }
+    return *this;
+}
+
+
 iterator(typename T::iterator x,typename T::iterator y){
     start=x;
     end=y;

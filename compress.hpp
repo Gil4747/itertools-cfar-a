@@ -9,8 +9,10 @@ namespace itertools{
 template<typename T,typename B>
 class compress{
 
-typedef typename T::value_type Tcontiner;
-typedef typename B::value_type Bcontiner;
+ T Tcontiner;
+ B Bcontiner;
+
+compress(T tc,B bc): Tcontiner(tc),Bcontiner(bc){}
 
 class iterator{
 
@@ -31,15 +33,15 @@ explicit iterator(typename T::iterator Cs,typename T::iterator Ce,typename B::it
     Eb=Be;
 }
 
-iterator operator=(const iterator& o){
-    if(this!=o){
+iterator& operator=(const iterator& o){
+    if(this!=&o){
         Sc=o.Sc;
         Sb=o.Sb;
         Ec=o.Ec;
         Eb=o.Eb;
     }
+    return *this;
 }
-iterator(const iterator& other)=default;
 
 bool operator==(const iterator& o){
     return (Sc==o.Sc && Ec==o.Ec && Sb==o.Sb && Eb==o.Eb);
@@ -75,10 +77,10 @@ return temp;
 };
 
 iterator& begin(){
-    return iterator(Sc,Ec,Sb,Eb);
+    return iterator(Tcontiner.begin(),Tcontiner.end(),Bcontiner.begin(),Bcontiner.end());
 }
 iterator& end(){
-    return iterator(Ec,Ec,Eb,Eb);
+    return iterator(Tcontiner.end(),Tcontiner.end(),Bcontiner.end(),Bcontiner.end());
 }
 };
 };

@@ -2,11 +2,10 @@
 #define Filterfalse
 
 #include <iostream>
-#include<stdio.h>
 #include <iterator>
 #include <functional>
-#include "range.hpp"
-#include <type_traits>
+#include <vector>
+
 
 namespace itertools{
 
@@ -24,14 +23,16 @@ class iterator{
 
 typename T::iterator start;
 typename T::iterator end;
-typename T::type cur;
+typename T::value_type cur;
 F fun;
 
 public:
 
+iterator(const iterator& other) = default;
+
 explicit iterator(typename T::iterator s,typename T::iterator e,F f):start(s),end(e),fun(f){}
 
-iterator(const iterator& other){
+iterator(iterator& other){
     if(this!=other){
         start(other.start);
         end(other.end);
@@ -45,12 +46,17 @@ iterator operator==(const iterator& other){
 iterator operator!=(const iterator& other){
     return !(this->start==other.start && this->end==other.end && this->cur==other.cur && this->func==other.func);
 }
-iterator operator=(const iterator& other){
+
+iterator& operator=(const iterator& other){
+    if(this!=&other){
     start(other.start);
     end(other.end);
     cur(other.cur);
     fun=other.fun;
+    }
+    return *this;
 }
+
 auto operator*(){
     return cur;
 }
