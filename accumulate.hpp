@@ -1,75 +1,95 @@
-#include <iostream>
-#include<stdio.h>
+#ifndef Accumulate
+#define Accumulate
+
 #include <iterator>
-#include <functional>
+#include "range.hpp"
 
-namespace AccumulateContainer{
+namespace itertools{
 
-template<typename T>
+      typedef struct {
+        template<typename T>
+        T operator()(T a, T b) const {
+            return a+b;
+        }
+    } Fun;
+
+template<typename T,typename F=Fun>
 class accumulate{
 
-T container;
+typedef typename T::value_type value_type;
+T continer;
+F function;
+
 
 public:
 
-accumulate(){}
-
-accumulate(T cont):container(cont){}
+explicit accumulate(T cont,F func=Fun()):continer(cont),function(func){}
 
 accumulate(const accumulate& other){
     if(*this!=other){
-  this->container(other->container);
+  this->continer(other->continer);
     }
 }
 
-class Aiterator{
+class iterator{
+
+friend class accumulate;
+
+private:
+
 typename T::iterator start;
 typename T::iterator end;
 typename T::value_type cur;
+F func;
 
 public:
-
-Aiterator(typename T::iterator x,typename T::iterator y){
+iterator(const iterator& other) = default;
+iterator(typename T::iterator x,typename T::iterator y){
     start=x;
     end=y;
     cur=*x;
     }
 
-Aiterator(const Aiterator& other) : start(other.start),end(other.end),cur(*other.start) {}
-
-Aiterator& operator++(){
-    Aiterator temp(start);
+iterator& operator++(){
+    iterator temp(start);
+    if(start!=end){
     ++start;
-    cur=std::accumulate(temp,start,cur);
+    }
+    cur=func(cur,*start);
     return *this;
 }
 
-Aiterator operator++(int)
-{
-Aiterator temp(start);
+iterator operator++(int){
+iterator temp(start,end);
+if(start!=end){
 start++;
-cur=std::accumulate(temp,start,cur);
+cur=func(cur,*start);
+}
 return temp;
 }
 
-bool operator==(const Aiterator& other){
+bool operator==(const iterator& other){
     return (*start==*other.start && *end==*other.end && cur==other.cur);
 }
 
-bool operator!=(const Aiterator& other){
+bool operator!=(const iterator& other){
     return !(*start==*other.start && *end==*other.end && cur==other.cur);
 }
 auto operator*(){
     return this->cur;
 }
+
 };
-Aiterator begin(){
-    return Aiterator(container.begin(),container.end());
+
+iterator begin(){
+    return iterator(continer.begin(),continer.end());
 }
-Aiterator end(){
-     return Aiterator(container.end(),container.end());
+iterator end(){
+     return iterator(continer.end(),continer.end());
 }
 
 };
 
 };
+
+#endif

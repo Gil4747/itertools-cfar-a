@@ -1,81 +1,79 @@
+#ifndef Range
+#define Range
+
 #include <iostream>
 #include<stdio.h>
 #include <iterator>
+#include <type_traits>
 
-namespace RangeContiner{
+namespace itertools{
+
 class range{
 
     int start;
-    int end;
+    int End;
 
-    public:
+public:
 
-    range(){}
-
-    range(int a,int b){
+ range(int a,int b){
+     if(a!=b){
         start=a;
-        end=b;
+        End=b;
+     }
+     else{
+         a=0;
+         b=0;
+     }
     }
   range(const range &other){
      start=other.start;
-     end=other.end;
-    }
-
-    int getStart(){
-        return start;
-    }
-
-    int getEnd(){
-        return end;
+     End=other.End;
     }
     
-
-class Riterator{
-
+class iterator{
+    friend class range;
     int cur;
     
     public:
 
-    Riterator(int x) :cur(x) {}
+    iterator(int x) :cur(x) {}
 
-    Riterator(const Riterator& other) : cur(other.cur) {}
+    iterator(const iterator& other) : cur(other.cur) {}
     
-    Riterator& operator++(){
+    iterator& operator++(){
         ++cur;
         return *this;
     }
-    Riterator operator++(int){
-        Riterator temp(cur);
+    iterator operator++(int){
+        iterator temp(cur);
         cur++;
         return temp;
     }
-    bool operator==(const Riterator& other){
+    bool operator==(const iterator& other){
         return cur==other.cur;
     }
-    bool operator!=(const Riterator& other){
+    bool operator!=(const iterator& other){
         return !(cur==other.cur);
     }
      int operator*() { return cur; }
 
-    Riterator& operator=(Riterator& other){
+    iterator& operator=(iterator& other){
         return other;
     }
     
 };
 
-Riterator Begin() const{
-    return Riterator(start);
+iterator begin(){
+    return iterator(start);
 }
-Riterator End() const{
-    return Riterator(end);
+iterator end(){
+    return iterator(End);
 } 
 
-};
-int main(){
-      range A(5,9);
-     range::Riterator a= A.Begin();
-     range::Riterator b= A.End();
+typedef int	value_type;
 
-    return 0;
-}
-}
+};
+
+};
+
+#endif
