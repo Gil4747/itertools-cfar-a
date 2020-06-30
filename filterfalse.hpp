@@ -9,83 +9,78 @@
 
 namespace itertools{
 
-template<typename T,typename F>
+template<typename F,typename T>
 class filterfalse{
 
-T continer;
-F func;
+typedef typename T::value_type value_type;
+F Fcontiner;
+T& Tcontiner;
 
 public:
 
-filterfalse(T c,F f): continer(c),func(f){}
+ filterfalse(F f, T& container): Fcontiner(f), Tcontiner(container){}
+ filterfalse(F f, T&& container): Fcontiner(f), Tcontiner(container){}
 
 class iterator{
 
-typename T::iterator start;
-typename T::iterator end;
-typename T::value_type cur;
-F fun;
+typename T::iterator iTstart;
+typename T::iterator iTend;
+F Fcontiner;
 
 public:
 
 iterator(const iterator& other) = default;
 
-explicit iterator(typename T::iterator s,typename T::iterator e,F f):start(s),end(e),fun(f){}
-
-iterator(iterator& other){
-    if(this!=other){
-        start(other.start);
-        end(other.end);
-        cur(other.cur);
-        fun(other.fun);
+iterator(typename T::iterator s,typename T::iterator e,F fun): iTstart(s),iTend(e),Fcontiner(fun){
+     while(iTstart!=iTend && !Fcontiner(*iTstart)){
+           ++iTstart;
     }
 }
-iterator operator==(const iterator& other){
-    return (this->start==other.start && this->end==other.end && this->cur==other.cur && this->func==other.func);
+
+iterator operator==(const iterator& other) const{
+    return (iTstart==other.iTstart);
 }
-iterator operator!=(const iterator& other){
-    return !(this->start==other.start && this->end==other.end && this->cur==other.cur && this->func==other.func);
+iterator operator!=(const iterator& other) const{
+    return !(iTstart==other.iTstart);
 }
 
 iterator& operator=(const iterator& other){
-    if(this!=&other){
-    start(other.start);
-    end(other.end);
-    cur(other.cur);
-    fun=other.fun;
+     if(this != &other) {
+        this->iTstart = other.iTstart;
+        this->iTend = other.iTend;
+        this->Fcontiner = other.Fcontiner;
+            }
+          return *this;
+        }
+
+auto operator*(){
+    return *iTstart;
+}
+
+iterator& operator++(){
+
+    while(iTstart!=iTend && !Fcontiner(*iTstart)){
+           ++iTstart;
     }
     return *this;
 }
 
-auto operator*(){
-    return cur;
-}
-iterator& operator++(){
-    typename T::iterator temp(start,end);
-    if(start!=end)
-    ++start;
-    cur=std::for_each(temp,start,fun);
-    return *this;
-}
-
-iterator operator++(int){
-    typename T::iterator temp(start,end);
-    if(start!=end)
-    ++start;
-    cur=std::for_each(temp,start,fun);
-    return *this;
-}
+ iterator operator ++(int){
+         iterator tmp = *this;
+            ++(*this);
+            return tmp;
+            }
 
 };
 
 iterator begin(){
-    return iterator(continer.begin(),continer.end());
+    return iterator(Tcontiner.begin(),Tcontiner.end(),Fcontiner);
 }
 iterator end(){
-     return iterator(continer.end(),continer.end());
+     return iterator(Tcontiner.end(),Tcontiner.end(),Fcontiner);
 }
 
 };
  
-};
+}
 #endif

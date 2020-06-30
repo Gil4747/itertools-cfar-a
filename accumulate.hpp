@@ -1,39 +1,33 @@
+
 #ifndef Accumulate
 #define Accumulate
-
+using namespace std;
+#include <iostream>
 #include <iterator>
 #include "range.hpp"
 
 namespace itertools{
 
       typedef struct {
-        template<typename T>
-        T operator()(T a, T b) const {
+        template<typename K>
+        K operator()(K a, K b) const {
             return a+b;
         }
     } Fun;
 
 template<typename T,typename F=Fun>
 class accumulate{
-
 typedef typename T::value_type value_type;
-T continer;
+T& continer;
 F function;
-
 
 public:
 
-explicit accumulate(T cont,F func=Fun()):continer(cont),function(func){}
+accumulate(T& continer, F func = Fun()) : continer(continer), function(func){}
 
-accumulate(const accumulate& other){
-    if(*this!=other){
-  this->continer(other->continer);
-    }
-}
+accumulate(T&& continer, F func = Fun()) : continer(continer), function(func){}
 
 class iterator{
-
-friend class accumulate;
 
 private:
 
@@ -43,49 +37,48 @@ typename T::value_type cur;
 F func;
 
 public:
-iterator(const iterator& other){cur=other.cur;}
+
+iterator(typename T::iterator start,typename T::iterator end,F func):start(start), end(end), func(func){
+    if(start!=end)
+    cur=*start;
     
+}
+
+iterator(const iterator& other){this=other;}
 
 iterator& operator=(const iterator& o){
     if(this!=&o){
         start=o.start;
         end=o.end;
         cur=o.cur;
+        func=o.func;
     }
     return *this;
 }
 
-
-iterator(typename T::iterator x,typename T::iterator y){
-    start=x;
-    end=y;
-    cur=*x;
-    }
-
 iterator& operator++(){
-    iterator temp(start);
+     ++start;
     if(start!=end){
-    ++start;
-    }
     cur=func(cur,*start);
+    }
     return *this;
 }
 
 iterator operator++(int){
-iterator temp(start,end);
-if(start!=end){
+iterator temp=*this;
 start++;
+if(start!=end){
 cur=func(cur,*start);
 }
 return temp;
 }
 
 bool operator==(const iterator& other){
-    return (*start==*other.start && *end==*other.end && cur==other.cur);
+    return (start==other.start && end==other.end);
 }
 
 bool operator!=(const iterator& other){
-    return !(*start==*other.start && *end==*other.end && cur==other.cur);
+    return !(start==other.start && end==other.end);
 }
 auto operator*(){
     return this->cur;
@@ -94,14 +87,14 @@ auto operator*(){
 };
 
 iterator begin(){
-    return iterator(continer.begin(),continer.end());
+    return iterator(continer.begin(),continer.end(),function);
 }
 iterator end(){
-     return iterator(continer.end(),continer.end());
+     return iterator(continer.end(),continer.end(),function);
 }
 
 };
 
-};
+}
 
 #endif

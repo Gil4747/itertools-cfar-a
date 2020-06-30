@@ -10,7 +10,7 @@ template<typename T,typename B>
 class compress{
 
  T Tcontiner;
- B Bcontiner;
+ B& Bcontiner;
 
 compress(T tc,B bc): Tcontiner(tc),Bcontiner(bc){}
 
@@ -83,5 +83,5 @@ iterator& end(){
     return iterator(Tcontiner.end(),Tcontiner.end(),Bcontiner.end(),Bcontiner.end());
 }
 };
-};
+}
 #endif
