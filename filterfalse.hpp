@@ -2,8 +2,8 @@
 #define Filterfalse
 
 #include <iostream>
-#include <iterator>
-#include <functional>
+//#include <iterator>
+//#include <functional>
 #include <vector>
 
 
@@ -12,9 +12,9 @@ namespace itertools{
 template<typename F,typename T>
 class filterfalse{
 
-typedef typename T::value_type value_type;
 F Fcontiner;
 T& Tcontiner;
+typedef typename T::value_type value_type;
 
 public:
 
@@ -29,20 +29,14 @@ F Fcontiner;
 
 public:
 
-iterator(const iterator& other) = default;
 
-iterator(typename T::iterator s,typename T::iterator e,F fun): iTstart(s),iTend(e),Fcontiner(fun){
-     while(iTstart!=iTend && !Fcontiner(*iTstart)){
+
+explicit iterator(typename T::iterator s,typename T::iterator e,F fun): iTstart(s),iTend(e),Fcontiner(fun){
+     while(iTstart!=iTend && Fcontiner(*iTstart)){
            ++iTstart;
     }
 }
-
-iterator operator==(const iterator& other) const{
-    return (iTstart==other.iTstart);
-}
-iterator operator!=(const iterator& other) const{
-    return !(iTstart==other.iTstart);
-}
+iterator(const iterator& other) = default;
 
 iterator& operator=(const iterator& other){
      if(this != &other) {
@@ -51,25 +45,33 @@ iterator& operator=(const iterator& other){
         this->Fcontiner = other.Fcontiner;
             }
           return *this;
-        }
+        };
 
-auto operator*(){
+ iterator& operator++(){
+  do{
+  ++iTstart;
+  } while (iTstart != iTend && _f(*iTstart));
+    return *this;
+}    
+
+iterator operator ++(int){
+   iterator tmp = *this;
+      ++(*this);
+    return tmp;
+    }
+
+bool operator==(const iterator& other) {
+    return (iTstart == other.iTstart);
+}
+bool operator!=(const iterator& other) {
+    return (iTstart != other.iTstart);
+}
+
+ 
+
+value_type operator*(){
     return *iTstart;
 }
-
-iterator& operator++(){
-
-    while(iTstart!=iTend && !Fcontiner(*iTstart)){
-           ++iTstart;
-    }
-    return *this;
-}
-
- iterator operator ++(int){
-         iterator tmp = *this;
-            ++(*this);
-            return tmp;
-            }
 
 };
 

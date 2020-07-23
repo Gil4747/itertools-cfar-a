@@ -1,8 +1,8 @@
 #ifndef Range
 #define Range
 
-#include<stdio.h>
-#include <iterator>
+//#include<stdio.h>
+//#include <iterator>
 #include <type_traits>
 
 namespace itertools{
@@ -14,20 +14,20 @@ class range{
 
 public:
  
- range(int a=0,int b=0){
-     if(a!=b){
-        start=a;
-        End=b;
-     }
-     else{
-         start=0;
-         End=0;
-     }
-    }
-  range(const range& other){
-     start=other.start;
-     End=other.End;
-    }
+ range(int a,int b):start(a), End(b){}
+    //  if(a!=b){
+    //     start=a;
+    //     End=b;
+    //  }
+    //  else{
+    //      start=0;
+    //      End=0;
+    //  }
+    // }
+//   range(const range& other){
+//      start=other.start;
+//      End=other.End;
+//     }
     
 class iterator{
    
@@ -35,30 +35,30 @@ class iterator{
     
     public:
 
-    explicit iterator(int x) :cur(x) {}
+    explicit iterator(int x) :cur(x) {};
 
-    iterator(const iterator& other) : cur(other.cur) {}
+    iterator(const iterator& other)=defult;
 
-     iterator& operator=(const iterator& other){
-        if(cur!=other.cur)
-         cur=other.cur;
+      iterator& operator=(const iterator& other){
+        if(this != &other)
+         this->cur=other.cur;
         return *this;
-    }
+    };
 
     iterator& operator++(){
         ++cur;
         return *this;
     }
     iterator operator++(int){
-        iterator temp=*this;
-        ++(*this);
+        iterator temp = *this;
+        ++cur;
         return temp;
     }
-    bool operator==(const iterator& other){
-        return cur==other.cur;
+    bool operator==(const iterator& other) {
+        return (cur == other.cur);
     }
-    bool operator!=(const iterator& other){
-        return !(cur==other.cur);
+    bool operator!=(const iterator& other ) {
+        return (cur != other.cur );
     }
      int operator*() { return cur; }
     
@@ -70,7 +70,7 @@ iterator begin(){
 iterator end(){
     return iterator(End);
 } 
-  typedef int value_type;
+  typedef int      value_type;
 };
 
 }

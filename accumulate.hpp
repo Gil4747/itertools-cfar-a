@@ -3,8 +3,8 @@
 #define Accumulate
 using namespace std;
 #include <iostream>
-#include <iterator>
-#include "range.hpp"
+//#include <iterator>
+//#include "range.hpp"
 
 namespace itertools{
 
@@ -23,9 +23,9 @@ F function;
 
 public:
 
-accumulate(T& continer, F func = Fun()) : continer(continer), function(func){}
+explicit accumulate(T& continer, F func = Fun()) : continer(continer), function(func){}
 
-accumulate(T&& continer, F func = Fun()) : continer(continer), function(func){}
+explicit accumulate(T&& continer, F func = Fun()) : continer(continer), function(func){}
 
 class iterator{
 
@@ -46,12 +46,12 @@ iterator(typename T::iterator start,typename T::iterator end,F func):start(start
 
 iterator(const iterator& other){this=other;}
 
-iterator& operator=(const iterator& o){
+const iterator& operator=(const iterator& o){
     if(this!=&o){
-        start=o.start;
-        end=o.end;
-        cur=o.cur;
-        func=o.func;
+        this->start=o.start;
+       this->end=o.end;
+        this->cur=o.cur;
+        this->func=o.func;
     }
     return *this;
 }
@@ -66,19 +66,16 @@ iterator& operator++(){
 
 iterator operator++(int){
 iterator temp=*this;
-start++;
-if(start!=end){
-cur=func(cur,*start);
-}
+++(*this);
 return temp;
 }
 
-bool operator==(const iterator& other){
-    return (start==other.start && end==other.end);
+bool operator==(const iterator& other) const{
+    return (start==other.start);
 }
 
-bool operator!=(const iterator& other){
-    return !(start==other.start && end==other.end);
+bool operator!=(const iterator& other) const{
+    return !(start==other.start);
 }
 auto operator*(){
     return this->cur;

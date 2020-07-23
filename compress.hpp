@@ -1,71 +1,58 @@
 #ifndef Compress
 #define Compress
 
-#include <iterator>
+#include <iostream>
 #include <vector>
 
 namespace itertools{
 
-template<typename T,typename B>
+template<typename T2,typename B>
 class compress{
 
- T Tcontiner;
+ T2& Tcontiner;
  B& Bcontiner;
+typedef typename T2::value_type value_type;
 
-compress(T tc,B bc): Tcontiner(tc),Bcontiner(bc){}
+public:
+compress(T2& tc,B& bc): Tcontiner(tc),Bcontiner(bc){}
+compress(T2&& tc, B&& bc): Tcontiner(tc),Bcontiner(bc){}
+compress(T2&& tc, B& bc): Tcontiner(tc),Bcontiner(bc){}
+compress(T2& tc, B&& bc): Tcontiner(tc),Bcontiner(bc){}
+
 
 class iterator{
 
 friend class compress;
 
-typename T::iterator Sc;
-typename T::iterator Ec;
+typename T2::iterator Sc;
+typename T2::iterator Ec;
 typename B::iterator Sb;
-typename B::iterator Eb;
-typename T::value_type cur;
+//typename B::iterator Eb;
+//typename T2::value_type cur;
 
 public:
 
-explicit iterator(typename T::iterator Cs,typename T::iterator Ce,typename B::iterator Bs,typename B::iterator Be){
-    Sc=Cs;
-    Ec=Ce;
-    Sb=Bs;
-    Eb=Be;
+explicit iterator(typename T2::iterator Cs,typename T2::iterator Ce,typename B::iterator Bs):Sc(Cs), Ec(Ce), Sb(Bs) {
+     while (Sc != Ec && !(*Sb)){
+        ++Sc;
+        ++Sb;
+   }
 }
+ iterator(const iterator& other) = default;
 
 iterator& operator=(const iterator& o){
     if(this!=&o){
-        Sc=o.Sc;
-        Sb=o.Sb;
-        Ec=o.Ec;
-        Eb=o.Eb;
+      this->Sc=o.Sc;
     }
     return *this;
-}
+};
 
-bool operator==(const iterator& o){
-    return (Sc==o.Sc && Ec==o.Ec && Sb==o.Sb && Eb==o.Eb);
-}
-bool operator!=(const iterator& o){
-    return !(Sc==o.Sc && Ec==o.Ec && Sb==o.Sb && Eb==o.Eb);
-}
-auto operator*(){
-    return cur;
-}
 iterator& operator++(){
-typename B::iterator temp2=Sb;
-typename T::iterator temp=Sc;
-while(*temp2!=true && Sc!=Ec && Sb!=Eb){
-temp2=Sb;
-temp=Sc;
-if(Sc!=Ec)
-    ++Sc;
-if(Sb!=Eb)
-    ++Sb;
-}
-if(*temp2==true)
-   cur=*temp;
-return *this;
+do{
+  ++Sc;
+   ++Sb;
+    } while (Sc != Ec && !(*Sb));
+     return *this;
 }
 
 iterator operator++(int){
@@ -73,14 +60,24 @@ iterator temp=*this;
 ++(*this);
 return temp;
 }
+bool operator==(const iterator& o) {
+    return (Sc==o.Sc);
+}
+bool operator!=(const iterator& o) {
+    return !(Sc!=o.Sc);
+}
+value_type operator*(){
+    return *Sc;
+}
+
 
 };
 
-iterator& begin(){
-    return iterator(Tcontiner.begin(),Tcontiner.end(),Bcontiner.begin(),Bcontiner.end());
+iterator begin(){
+    return iterator(Tcontiner.begin(),Tcontiner.end(),Bcontiner.begin());
 }
-iterator& end(){
-    return iterator(Tcontiner.end(),Tcontiner.end(),Bcontiner.end(),Bcontiner.end());
+iterator end(){
+    return iterator(Tcontiner.end(),Tcontiner.end(),Bcontiner.end());
 }
 };
 }
