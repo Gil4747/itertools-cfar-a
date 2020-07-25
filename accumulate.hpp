@@ -70,11 +70,11 @@ iterator temp=*this;
 return temp;
 }
 
-bool operator==(const iterator& other) const{
+bool operator==(const iterator& other){
     return (start==other.start);
 }
 
-bool operator!=(const iterator& other) const{
+bool operator!=(const iterator& other){
     return !(start==other.start);
 }
 auto operator*(){
