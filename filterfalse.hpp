@@ -50,7 +50,7 @@ iterator& operator=(const iterator& other){
  iterator& operator++(){
   do{
   ++iTstart;
-  } while (iTstart != iTend && _f(*iTstart));
+  } while (iTstart != iTend && Fcontiner(*iTstart));
     return *this;
 }    
 
