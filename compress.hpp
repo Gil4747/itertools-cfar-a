@@ -43,6 +43,8 @@ explicit iterator(typename T2::iterator Cs,typename T2::iterator Ce,typename B::
 iterator& operator=(const iterator& o){
     if(this!=&o){
       this->Sc=o.Sc;
+      this->Ec=o.Ec;
+        this->Sb=o.Sb;
     }
     return *this;
 };
@@ -61,10 +63,10 @@ iterator temp=*this;
 return temp;
 }
 bool operator==(const iterator& o) {
-    return (Sc==o.Sc);
+    return (Sc==o.Sc && Sb==o.Sb);
 }
 bool operator!=(const iterator& o) {
-    return !(Sc!=o.Sc);
+    return !(Sc==o.Sc && Sb==o.Sb);
 }
 value_type operator*(){
     return *Sc;
