@@ -37,7 +37,7 @@ class iterator{
 
     explicit iterator(int x) :cur(x) {};
 
-    iterator(const iterator& other)=defult;
+    iterator(const iterator& other):cur(other.cur){}
 
       iterator& operator=(const iterator& other){
         if(this != &other)
